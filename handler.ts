@@ -1,28 +1,28 @@
 import { Handler } from 'aws-lambda';
 
-export const hello: Handler = (event: any) => {
+export const hello: Handler = async (event: any) => {
+  console.log(event)
   let response;
-  if (event.httpMethod === 'GET' || !event.body.message) {
-    response = 'Hello! This function is meant to be used in a Hangouts Chat Room.';
+  if (event.httpMethod === 'GET' || !event.body) {
+    response = {
+      statusCode: 200,
+      body: 'Hello! This function is meant to be used in a Hangouts Chat Room.'
+    };
   } else {
-    const sender = event.body.message.sender.displayName;
-    const image = event.body.message.sender.avatarUrl;
-
+    const payload = JSON.parse(event.body)
+    const sender = payload.message.sender.displayName;
+    const image = payload.message.sender.avatarUrl;
+    const text = `${sender} slap Andrew's face, Ouch!!!`
     response = {
       statusCode: 200,
       body: JSON.stringify(
         {
-          sender,
-          image,
-          input: event,
-        },
-        null,
-        2
+          text: text
+        }
       ),
     };
   }
+  console.log(response);
 
-  return new Promise((resolve) => {
-    resolve(response)
-  })
+  return response;
 }
