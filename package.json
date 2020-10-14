@@ -2,7 +2,9 @@
   "name": "jibot",
   "description": "",
   "version": "0.1.0",
-  "dependencies": {},
+  "dependencies": {
+    "aws-sdk": "^2.771.0"
+  },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.61",
     "serverless": "^2.6.0",

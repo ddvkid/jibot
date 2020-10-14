@@ -1,6 +1,8 @@
 import { Handler } from 'aws-lambda';
+import { handleAddToSpace, handleCardClick, handleMessage } from "./services/message";
+import { DynamoDB } from 'aws-sdk';
 
-export const hello: Handler = async (event: any) => {
+export const bot: Handler = async (event: any) => {
   console.log(event)
   let response;
   if (event.httpMethod === 'GET' || !event.body) {
@@ -32,20 +34,13 @@ export const hello: Handler = async (event: any) => {
   return response;
 }
 
-const handleAddToSpace = (body) => {
-  return {
-    text: 'handleAddToSpace ' + body.message.sender.displayName
+export const lookup: Handler = (event: any) => {
+  const dynamoDb = new DynamoDB();
+  const params = {
+    TableName: "activities"
   }
-}
-
-const handleMessage = (body) => {
-  return {
-    text: 'handleMessage ' + JSON.stringify(body.message.sender)
-  }
-}
-
-const handleCardClick = (body) => {
-  return {
-    text: 'handleCardClick ' + body.message.sender.displayName
-  }
+  dynamoDb.scan(params, (err, data) => {
+    if (err) console.log(err, err.stack);
+    else     console.log(data);
+  });
 }
