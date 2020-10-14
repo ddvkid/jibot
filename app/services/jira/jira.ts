@@ -1,65 +1,39 @@
 import axios from 'axios';
-import { HttpBaseOptions } from './constants';
+const OP_ATLASSIAN_API_USER='andrew.yang@rokt.com'
+const OP_ATLASSIAN_API_TOKEN='XnvYyVPtzl1VdHCkoGBx894C'
 
-const getTicketDetails = (ticketId, authOptions) => {
-  return new Promise((resolve, reject) => {
-    axios.get(
-      {
-        ...authOptions,
-        url: `https://rokton.atlassian.net/rest/api/3/issue/${ticketId}`
-      },
-      (error, response, body) => {
-        if (error) {
-          throw new Error('Error occurred sending network request.');
-        }
+const jiraAxios = axios.create({
+  baseURL: 'https://rokton.atlassian.net/rest/api/2',
+  auth: {
+    username: OP_ATLASSIAN_API_USER,
+    password: OP_ATLASSIAN_API_TOKEN,
+  },
+  headers: {
+    Accept: 'application/json',
+    ContentType: 'application/json'
+  },
+})
 
-        // Not found ticket falls back to release message
-        if (response.statusCode === 404) {
-          const data = {
-            isFound: false,
-            key: ticketId
-          };
-
-          return resolve(data);
-        }
-
-        if (response.statusCode !== 200) {
-          throw new Error(`Error retrieving Jira ticket: ${JSON.stringify(body, null, 2)}`);
-        }
-
-        const {
-          id,
-          key,
-          fields: {
-            summary,
-            issuetype: { name: issueType },
-            project: { id: projectId, name: projectName, key: projectKey },
-            reporter: { accountId: reportedById, name: reportedBy, displayName: reportedByName }
-          }
-        } = body;
-
-        const data = {
+export async function getTicketDtails(ticketId: string) {
+  return jiraAxios.get(`/issue/${ticketId}`)
+      .then(response => ({
+        ...response,
+        data: {
           isFound: true,
-          id,
-          key,
-          summary,
-          issueType,
-          projectId,
-          projectName,
-          projectKey,
-          reportedBy,
-          reportedByName,
-          reportedByUrl: `https://rokton.atlassian.net/jira/people/${reportedById}`
-        };
-        resolve(data);
-      }
-    );
-  });
-};
+          ...response?.data
+        }
+      }))
+      .catch((error) => {
+        // Just simply return the data with isFound:false when error happens.
+        console.log(error.toJSON());
+        return {
+          data: {
+            isFound: false,
+            key: ticketId,
+          }
+        }
+      })
+}
 
-module.exports = {
-  getProjectKeyMapping,
-  getTicketDetails,
-  parseJiraTickets,
-  updateTicketLabel
-};
+
+
