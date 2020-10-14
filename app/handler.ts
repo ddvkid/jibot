@@ -1,7 +1,6 @@
 import { Handler } from 'aws-lambda';
 import { handleAddToSpace, handleCardClick, handleMessage } from './services/message';
 import { DynamoDB } from 'aws-sdk';
-import request from 'request';
 
 export const bot: Handler = async (event: any) => {
   let response;
