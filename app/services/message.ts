@@ -12,7 +12,7 @@ export const handleMessage = async (body) => {
   if (action && action.toLowerCase() === 'subscribe') {
     return await subscribe(body, type, value);
   }
-  if (action.toLowerCase() === 'getjiraticket') {
+  if (action && action.toLowerCase() === 'getjiraticket') {
     const tickets = parseJiraTickets(body?.message?.text);
 
     if (!tickets || tickets.length === 0) {
@@ -28,12 +28,35 @@ export const handleMessage = async (body) => {
     };
   }
   return {
-    text: 'handleMessage ' + JSON.stringify(body.message)
-  };
+    "cards": [
+      {
+        "sections": [
+          {
+            "widgets": [
+              {
+                "image": { "imageUrl": "https://andrews-jibot-images.s3.amazonaws.com/2059171460.jpg" }
+              },
+            ]
+          },
+          {
+            "widgets": [
+              {
+                "textParagraph":{
+                  "text": JSON.stringify(body.message),
+                }
+                
+              }
+            ]
+          },
+
+        ]
+      }
+    ]
+  }
 };
 
 export const handleCardClick = (body) => {
   return {
     text: 'handleCardClick ' + body.message.sender.displayName
   };
-};
+}
