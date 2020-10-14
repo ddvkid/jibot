@@ -3,7 +3,6 @@ import { handleAddToSpace, handleCardClick, handleMessage } from "./services/mes
 import { DynamoDB } from 'aws-sdk';
 
 export const bot: Handler = async (event: any) => {
-  console.log(event)
   let response;
   if (event.httpMethod === 'GET' || !event.body) {
     response = {
@@ -18,7 +17,7 @@ export const bot: Handler = async (event: any) => {
         value = handleAddToSpace(payload);
         break;
       case 'MESSAGE':
-        value = handleMessage(payload);
+        value = await handleMessage(payload);
         break;
       case 'CARD_CLICKED':
         value = handleCardClick(payload);

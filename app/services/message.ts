@@ -1,10 +1,15 @@
+import { subscribe } from './subscription';
+
 export const handleAddToSpace = (body) => {
   return {
     text: 'handleAddToSpace ' + body.message.sender.displayName
   }
 }
 
-export const handleMessage = (body) => {
+export const handleMessage = async (body) => {
+  if (body.message.text.includes("subscribe")) {
+    return await subscribe(body);
+  }
   return {
     text: 'handleMessage ' + JSON.stringify(body.message.sender)
   }
