@@ -10,25 +10,21 @@ export const hello: Handler = async (event: any) => {
     };
   } else {
     const payload = JSON.parse(event.body);
-    let text;
+    let value;
     switch (payload.type) {
       case 'ADDED_TO_SPACE':
-        text = handleAddToSpace(payload);
+        value = handleAddToSpace(payload);
         break;
       case 'MESSAGE':
-        text = handleMessage(payload);
+        value = handleMessage(payload);
         break;
       case 'CARD_CLICKED':
-        text = handleCardClick(payload);
+        value = handleCardClick(payload);
         break;
     }
     response = {
       statusCode: 200,
-      body: JSON.stringify(
-        {
-          text: text
-        }
-      ),
+      body: JSON.stringify(value),
     };
   }
   console.log(response);
@@ -37,13 +33,19 @@ export const hello: Handler = async (event: any) => {
 }
 
 const handleAddToSpace = (body) => {
-  return 'handleAddToSpace' + body.message.sender.displayName;
+  return {
+    text: 'handleAddToSpace ' + body.message.sender.displayName
+  }
 }
 
 const handleMessage = (body) => {
-  return 'handleMessage' + body.message.sender.displayName;
+  return {
+    text: 'handleMessage ' + JSON.stringify(body.message.sender)
+  }
 }
 
 const handleCardClick = (body) => {
-  return 'handleCardClick' + body.message.sender.displayName;
+  return {
+    text: 'handleCardClick ' + body.message.sender.displayName
+  }
 }
