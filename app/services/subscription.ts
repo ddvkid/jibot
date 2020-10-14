@@ -5,23 +5,24 @@ export const subscribe = async (type: string, payload: any) => {
   console.log(payload);
 
   // Create the DynamoDB service object
-  const ddb = new DynamoDB({ apiVersion: "2012-08-10" });
 
   const params = {
     TableName: "jibot-subscription",
     Item: {
-      id: { S: v4() },
-      type: { S: type },
-      thread: { S: payload.message.thread.name },
-      user: { S: payload.message.sender },
+      id: v4(),
+      type: type,
+      thread: payload.message.thread.name,
+      user: payload.message.sender
     },
   };
 
   // Call DynamoDB to add the item to the table
   try {
-    await ddb.putItem(params).promise();
+    const ddb = new DynamoDB.DocumentClient();
+
+    await ddb.put(params).promise();
   } catch (e) {
-    console.log(e);
+    console.error(e);
   }
 
   return { text: "subscribed!!" };
