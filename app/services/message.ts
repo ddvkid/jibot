@@ -12,7 +12,7 @@ export const handleMessage = async (body) => {
   if (action && action.toLowerCase() === 'subscribe') {
     return await subscribe(type, body);
   }
-  if (action.toLowerCase() === 'get jira ticket') {
+  if (action.toLowerCase() === 'getjiraticket') {
     const tickets = parseJiraTickets(body?.message?.text);
 
     if (!tickets || tickets.length === 0) {
