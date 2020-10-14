@@ -56,6 +56,15 @@ export const lookup: Handler = (event: any) => {
   });
 }
 
+const baseOptions = {
+  method: 'GET',
+  headers: {
+    Accept: 'application/json',
+    ContentType: 'application/json'
+  },
+  json: true
+};
+
 const getTicketDetails = (ticketId, authOptions) => {
   return new Promise((resolve, reject) => {
     request(
