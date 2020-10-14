@@ -8,9 +8,9 @@ export const handleAddToSpace = (body) => {
 }
 
 export const handleMessage = async (body) => {
-  const [ _, action, type, name, ...params ] = body.message.text.split(' ');
+  const [ _, action, type, value, ...params ] = body.message.text.split(' ');
   if (action && action.toLowerCase() === 'subscribe') {
-    return await subscribe(type, body);
+    return await subscribe(body, type, value);
   }
   if (action.toLowerCase() === 'get jira ticket') {
     const tickets = parseJiraTickets(body?.message?.text);

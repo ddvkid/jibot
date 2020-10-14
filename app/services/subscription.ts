@@ -1,7 +1,7 @@
 import { DynamoDB } from "aws-sdk";
 import { v4 } from "uuid";
 
-export const subscribe = async (type: string, payload: any) => {
+export const subscribe = async (type: string, payload: any, value: string) => {
   console.log(payload);
 
   // Create the DynamoDB service object
@@ -13,6 +13,7 @@ export const subscribe = async (type: string, payload: any) => {
       id: { S: v4() },
       type: { S: type },
       thread: { S: payload.message.thread.name },
+      value: { S: value}
     },
   };
 
