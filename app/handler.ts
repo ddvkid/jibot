@@ -34,7 +34,7 @@ export const bot: Handler = async (event: any) => {
   return response;
 }
 
-export const lookup: Handler = async (event: any) => {
+export const lookup: Handler = (event: any) => {
   const dynamoDb = new DynamoDB();
   const params = {
     TableName: "activities"
