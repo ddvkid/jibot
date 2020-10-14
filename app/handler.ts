@@ -34,13 +34,24 @@ export const bot: Handler = async (event: any) => {
   return response;
 }
 
-export const lookup: Handler = (event: any) => {
+export const lookup: Handler = async (event: any) => {
   const dynamoDb = new DynamoDB();
   const params = {
     TableName: "activities"
   }
   dynamoDb.scan(params, (err, data) => {
-    if (err) console.log(err, err.stack);
-    else     console.log(data);
+    if (err) {
+      console.log(err, err.stack);
+      return {
+        statusCode: 500,
+        body: JSON.stringify(err.stack),
+      };
+    } else {
+      console.log(data);
+      return {
+        statusCode: 200,
+        body: JSON.stringify(data),
+      };
+    }
   });
 }
