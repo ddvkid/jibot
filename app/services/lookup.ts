@@ -2,7 +2,7 @@ import { getTicketDetails } from "./jira/jira";
 
 export const lookup = async(body, type, value) => {
 
-  if (new RegExp('([a-zA-Z]{2,4}-\\d+)', 'g').test(value)) {
+  if (!new RegExp('([a-zA-Z]{2,4}-\\d+)', 'g').test(value)) {
     return {
       text: 'Invalid ticket number!',
     };
