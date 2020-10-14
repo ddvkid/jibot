@@ -55,7 +55,12 @@ resources:
                 KeyType: HASH
             Projection: 
               ProjectionType: ALL
-   
+          - IndexName: value-index
+            KeySchema:
+              - AttributeName: 'value'
+                KeyType: HASH
+            Projection: 
+              ProjectionType: ALL
               
     
  
