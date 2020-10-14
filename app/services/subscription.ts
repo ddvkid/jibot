@@ -1,7 +1,7 @@
 import { DynamoDB } from "aws-sdk";
 import { v4 } from "uuid";
 
-export const subscribe = async (payload: any) => {
+export const subscribe = async (type: string, payload: any) => {
   console.log(payload);
 
   // Create the DynamoDB service object
@@ -11,7 +11,9 @@ export const subscribe = async (payload: any) => {
     TableName: "jibot-subscription",
     Item: {
       id: { S: v4() },
-      user: { S: payload.message.sender.displayName },
+      type: { S: type },
+      thread: { S: payload.message.thread.name },
+      user: { S: payload.message.sender },
     },
   };
 

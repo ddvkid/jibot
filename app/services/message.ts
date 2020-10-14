@@ -7,8 +7,9 @@ export const handleAddToSpace = (body) => {
 }
 
 export const handleMessage = async (body) => {
-  if (body.message.text.includes("subscribe")) {
-    return await subscribe(body);
+  const [_, action, type, name] = body.message.text.split(' ');
+  if (action.toLowerCase() === "subscribe") {
+    return await subscribe(type, body);
   }
   return {
     text: 'handleMessage ' + JSON.stringify(body.message.sender)
