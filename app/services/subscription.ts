@@ -1,12 +1,12 @@
 import { DynamoDB } from "aws-sdk";
 
-export const subscribe = async (type: string, payload: any, value: string) => {
+export const subscribe = async (payload: any, type: string, value: string) => {
   console.log(payload);
 
   const params = {
     TableName: "jibot-subscription",
     Item: {
-      id: payload.message && payload.message.thread.name || '123',
+      id: payload.message && payload.message.thread.name,
       type,
       user: payload.message && payload.message.sender,
       value
