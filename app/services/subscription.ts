@@ -1,9 +1,7 @@
 import { DynamoDB } from "aws-sdk";
 
-export const subscribe = async (type: string, payload: any, value: string) => {
+export const subscribe = async (type: string, payload: any = { message: {}}, value: string) => {
   console.log(payload);
-
-  // Create the DynamoDB service object
 
   const params = {
     TableName: "jibot-subscription",
