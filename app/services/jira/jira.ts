@@ -35,18 +35,5 @@ export async function getTicketDetails(ticketId: string) {
     });
 }
 
-const deduplicate = array => {
-  return [...new Set(array)];
-};
-
-export const parseJiraTickets = text => {
-  const validTicketKey = new RegExp('([a-zA-Z]{2,4}-\\d+)', 'g');
-  let uniqueTicketKeys = [];
-  if (validTicketKey.test(text)) {
-    uniqueTicketKeys = deduplicate([...text.match(validTicketKey)]);
-  }
-
-  return uniqueTicketKeys;
-};
 
 
