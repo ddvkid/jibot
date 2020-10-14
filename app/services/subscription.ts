@@ -6,10 +6,10 @@ export const subscribe = async (payload: any = {message: {}}, type: string, valu
   const params = {
     TableName: "jibot-subscription",
     Item: {
-      id: payload.message.thread.name,
+      id: payload.message.thread.name+type+value,
       type,
       value,
-      user: payload.message.sender,
+      user: payload.message.sender.displayName,
       chat_info: payload
     },
   };
