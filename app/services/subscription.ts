@@ -13,7 +13,7 @@ export const subscribe = async (type: string, payload: any) => {
       id: { S: v4() },
       type: { S: type },
       thread: { S: payload.message.thread.name },
-      user: { S: payload.message.sender },
+      user: payload.message.sender,
     },
   };
 
