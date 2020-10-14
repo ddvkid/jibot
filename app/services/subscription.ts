@@ -1,5 +1,4 @@
 import { DynamoDB } from "aws-sdk";
-import { v4 } from "uuid";
 
 export const subscribe = async (type: string, payload: any, value: string) => {
   console.log(payload);
@@ -10,10 +9,9 @@ export const subscribe = async (type: string, payload: any, value: string) => {
   const params = {
     TableName: "jibot-subscription",
     Item: {
-      id: { S: v4() },
+      id: { S: payload.message.thread.name },
       type: { S: type },
-      thread: { S: payload.message.thread.name },
-      value: { S: value}
+      value: { S: value }
     },
   };
 

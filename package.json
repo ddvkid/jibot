@@ -4,7 +4,6 @@
   "version": "0.1.0",
   "dependencies": {
     "aws-sdk": "^2.771.0",
-    "uuid": "^8.3.1",
     "request": "^2.88.2",
     "axios": "^0.20.0"
   },
