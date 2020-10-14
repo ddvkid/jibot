@@ -5,10 +5,14 @@ provider:
   name: aws
   runtime: nodejs12.x
   iamRoleStatements:
-    - Effect: "Allow"
-      Resource: "*"
+    - Effect: Allow
       Action:
-        - "dynamodb:*"
+        - 'dynamodb:*'
+      Resource: 
+        Fn::GetAtt:
+          - DynamoDBTable
+          - Arn
+      
 functions:
   bot:
     handler: app/handler.bot
@@ -25,3 +29,20 @@ functions:
 
 plugins:
   - serverless-plugin-typescript
+
+# you can add CloudFormation resource templates here
+resources:
+ Resources:
+    DynamoDBTable:
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: 'id'
+            AttributeType: 'S'
+        KeySchema:
+          - AttributeName: 'id'
+            KeyType: 'HASH'
+        BillingMode: PAY_PER_REQUEST
+        TableName: jibot-subscription
+    
+ 
