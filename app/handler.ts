@@ -54,7 +54,7 @@ export const lookup: Handler = (event: any) => {
       };
     }
   });
-}
+};
 
 const baseOptions = {
   method: 'GET',
