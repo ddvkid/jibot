@@ -14,7 +14,7 @@ const jiraAxios = axios.create({
   },
 })
 
-export async function getTicketDtails(ticketId: string) {
+export async function getTicketDetails(ticketId: string) {
   return jiraAxios.get(`/issue/${ticketId}`)
       .then(response => ({
         ...response,
@@ -35,5 +35,18 @@ export async function getTicketDtails(ticketId: string) {
       })
 }
 
+const deduplicate = array => {
+  return [...new Set(array)];
+};
+
+const parseJiraTickets = text => {
+  const validTicketKey = new RegExp('([a-zA-Z]{2,4}-\\d+)', 'g');
+  let uniqueTicketKeys = [];
+  if (validTicketKey.test(text)) {
+    uniqueTicketKeys = deduplicate([...text.match(validTicketKey)]);
+  }
+
+  return uniqueTicketKeys;
+};
 
 

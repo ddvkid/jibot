@@ -1,4 +1,5 @@
 import { subscribe } from './subscription';
+import { getTicketDetails } from './jira/jira';
 
 export const handleAddToSpace = (body) => {
   return {
@@ -7,17 +8,30 @@ export const handleAddToSpace = (body) => {
 }
 
 export const handleMessage = async (body) => {
-  const [_, action, type, name] = body.message.text.split(' ');
-  if (action && action.toLowerCase() === "subscribe") {
+  const [_, action, type, name, ...params ] = body.message.text.split(' ');
+  if (action && action.toLowerCase() === 'subscribe') {
     return await subscribe(type, body);
+  }
+  if (action.toLowerCase() === 'get jira ticket') {
+    const tickets = parseJiraTickets(body?.message?.text);
+
+    if (!tickets || tickets.length === 0) {
+      return {
+        text: 'No ticket entered',
+      };
+    }
+
+    const ticketDetails = await Promise.all(tickets.map(ticketId => getTicketDetails(ticketId)));
+
+    return ticketDetails.filter((ticket: any) => ticket.isFound);
   }
   return {
     text: 'handleMessage ' + JSON.stringify(body.message)
-  }
-}
+  };
+};
 
 export const handleCardClick = (body) => {
   return {
     text: 'handleCardClick ' + body.message.sender.displayName
-  }
-}
+  };
+};
