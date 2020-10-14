@@ -8,7 +8,7 @@ export const handleAddToSpace = (body) => {
 }
 
 export const handleMessage = async (body) => {
-  const [ _, action, type, name, ...params ] = body.message.text.split(' ');
+  const [ action, type, name, ...params ] = body.message.argumentText.split(' ');
   if (action && action.toLowerCase() === 'subscribe') {
     return await subscribe(type, body);
   }
