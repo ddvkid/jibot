@@ -16,30 +16,30 @@ const jiraAxios = axios.create({
 
 export async function getTicketDetails(ticketId: string) {
   return jiraAxios.get(`/issue/${ticketId}`)
-      .then(response => ({
-        ...response,
+    .then(response => ({
+      ...response,
+      data: {
+        isFound: true,
+        ...response?.data
+      }
+    }))
+    .catch((error) => {
+      // Just simply return the data with isFound:false when error happens.
+      console.log(error.toJSON());
+      return {
         data: {
-          isFound: true,
-          ...response?.data
+          isFound: false,
+          key: ticketId,
         }
-      }))
-      .catch((error) => {
-        // Just simply return the data with isFound:false when error happens.
-        console.log(error.toJSON());
-        return {
-          data: {
-            isFound: false,
-            key: ticketId,
-          }
-        }
-      })
+      };
+    });
 }
 
 const deduplicate = array => {
   return [...new Set(array)];
 };
 
-const parseJiraTickets = text => {
+export const parseJiraTickets = text => {
   const validTicketKey = new RegExp('([a-zA-Z]{2,4}-\\d+)', 'g');
   let uniqueTicketKeys = [];
   if (validTicketKey.test(text)) {

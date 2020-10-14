@@ -1,5 +1,5 @@
 import { subscribe } from './subscription';
-import { getTicketDetails } from './jira/jira';
+import { getTicketDetails, parseJiraTickets } from './jira/jira';
 
 export const handleAddToSpace = (body) => {
   return {
@@ -23,7 +23,9 @@ export const handleMessage = async (body) => {
 
     const ticketDetails = await Promise.all(tickets.map(ticketId => getTicketDetails(ticketId)));
 
-    return ticketDetails.filter((ticket: any) => ticket.isFound);
+    return {
+      text: JSON.stringify(ticketDetails.filter((ticket: any) => ticket.isFound)),
+    };
   }
   return {
     text: 'handleMessage ' + JSON.stringify(body.message)
