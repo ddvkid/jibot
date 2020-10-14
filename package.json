@@ -5,7 +5,8 @@
   "dependencies": {
     "aws-sdk": "^2.771.0",
     "uuid": "^8.3.1",
-    "request": "^2.88.2"
+    "request": "^2.88.2",
+    "axios": "^0.20.0"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.61",
