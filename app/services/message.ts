@@ -44,10 +44,14 @@ export const handleMessage = async (body) => {
         ]
       };
     case 'help':
-    default:
+    case '':
       return {
         text: "*Commands:*\n  - lookup\n - subscribe\n - unsubscribe\n *Types:*\n - jira\n - account\n - campaign\n For example: lookup jira *ticket-num*"
       };
+    default:
+      return {
+        text: "Sorry this feature is not available on a free account, join us now with only $99/day!!!"
+      }
   }
 };
 
