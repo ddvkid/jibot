@@ -7,8 +7,8 @@ const app = express()
   .use(express.urlencoded({extended: false}))
   .use(express.json());
 
-app.get('/lookup', async (req, res) => {
-  const accountInfo = await getAccountInfo('1');
+app.get('/account/:id', async (req, res) => {
+  const accountInfo = await getAccountInfo(req.params.id);
   return res.json(accountInfo);
 });
 

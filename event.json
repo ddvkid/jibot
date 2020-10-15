@@ -1,4 +1,4 @@
 {
   "httpMethod": "POST",
-  "body": "{\"type\":\"MESSAGE\",\"message\":{\"name\":\"spaces/8yl_8QAAAAE/messages/Ptz83KdoX6I.Ptz83KdoX6I\",\"sender\":{\"name\":\"lol\",\"displayName\":\"John Cao\"},\"text\":\"@Jibot lookup account 1\"}}"
+  "body": "{\"type\":\"MESSAGE\",\"message\":{\"name\":\"spaces/8yl_8QAAAAE/messages/Ptz83KdoX6I.Ptz83KdoX6I\",\"sender\":{\"name\":\"lol\",\"displayName\":\"John Cao\"},\"text\":\"@Jibot lookup account 2\"}}"
 }
