@@ -3,7 +3,7 @@ import { message } from "./bot";
 import { lookup } from "./lookup";
 
 export const subscribe = async (payload: any = {message: {}}, type: string, value: string) => {
-  const msg = await lookup(payload, type, value);
+  const msg = await lookup(payload, type, value, true);
   if (msg.text && msg.text.includes('invalid')) {
     return msg;
   }
