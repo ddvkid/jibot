@@ -13,8 +13,9 @@ export const handleMessage = async (body) => {
     case 'lookup':
       return await lookup(body, type, value);
     case 'lunch':
-      const foods = await getFoods();
-      return foods;
+      const { data: { results } } = await getFoods() as any;
+      const food = results[Math.floor(Math.random() * results.length)];
+      return food;
     case 'surprise?':
       return {
         "cards": [
