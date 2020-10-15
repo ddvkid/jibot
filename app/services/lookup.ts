@@ -93,13 +93,124 @@ const handleJira = async (ticketNumber) => {
 
 const handleType = async (type, id) => {
   const data = await getProxyData(type, id);
-  return createMessage(type, data)
+  return createMessage(type, data);
 }
+
+const countriesById = {
+  9: 'Australia',
+  30: 'Canada',
+  47: 'Denmark',
+  58: 'Finland',
+  60: 'France',
+  44: 'Germany',
+  81: 'India',
+  79: 'Ireland',
+  88: 'Japan',
+  129: 'Netherlands',
+  132: 'New Zealand',
+  130: 'Norway',
+  152: 'Singapore',
+  56: 'Spain',
+  151: 'Sweden',
+  62: 'United Kingdom',
+  177: 'United States',
+};
 
 const createMessage = (type, data) => {
   switch (type) {
-    case 'type':
-      return { text: data.name };
+    case 'account':
+      return { 
+        "cards": [
+          {
+            "header": {
+              "title": data.name,
+              "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Microsoft_Account.svg/1200px-Microsoft_Account.svg.png"
+            },
+            "sections": [
+              {
+                "widgets": [
+                  {
+                    "keyValue": {
+                      "topLabel": "Account Country",
+                      "content": countriesById[data.countryId]
+                    }
+                  },
+                  {
+                    "keyValue": {
+                      "topLabel": "Account Timezone",
+                      "content": data.timezone.name,
+                      "contentMultiline": "true",
+                    }
+                  }
+                ]
+              },
+              {
+                "header": "<b><font color=\"black\">Company details</font></b>",
+                "widgets": [
+                  {
+                    "keyValue": {
+                      "topLabel": "Brand Name",
+                      "content": data.brand
+                    }
+                  },
+                  {
+                    "keyValue": {
+                      "topLabel": "Website Domain",
+                      "content": data.websiteUrl
+                    }
+                  },
+                  {
+                    "keyValue": {
+                      "topLabel": "Vertical",
+                      "content": "Affiliates, Loyalty & Samples"
+                    }
+                  },
+                  {
+                    "keyValue": {
+                      "topLabel": "Sub-vertical",
+                      "content": "Comparison Sites"
+                    }
+                  }
+                ]
+              },
+              {
+                "header": "<b><font color=\"black\">Account Management</font></b>",
+                "widgets": [
+                  {
+                    "keyValue": {
+                      "topLabel": "Full Name",
+                      "content": "James Bond"
+                    }
+                  },
+                  {
+                    "keyValue": {
+                      "topLabel": "Email Address",
+                      "content": "james.bond@rokt.com"
+                    }
+                  },
+                  {
+                    "keyValue": {
+                      "topLabel": "Phone Number",
+                      "content": "-"
+                    }
+                  }
+                ]
+              },
+              {
+                "header": "<b><font color=\"black\">Nurture Sender Domain</font></b>",
+                "widgets": [
+                  {
+                    "keyValue": {
+                      "topLabel": "Domain Name",
+                      "content": "-"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      };
     case 'campaign':
       return { text: 'campaign' };
   }
