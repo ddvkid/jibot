@@ -1,5 +1,5 @@
 import { Handler } from 'aws-lambda';
-import { handleAddToSpace, handleCardClick, handleMessage } from './services/message';
+import { handleCardClick, handleMessage } from './services/message';
 import { DynamoDB } from 'aws-sdk';
 
 export const bot: Handler = async (event: any) => {
@@ -7,14 +7,21 @@ export const bot: Handler = async (event: any) => {
   if (event.httpMethod === 'GET' || !event.body) {
     response = {
       statusCode: 200,
-      body: 'Hello! I’m Roktbot. I can help you subscribe to jira tickets, search jira or search campaigns. Type ‘help’ to find out more.'
+      body: 'waaaaat?'
     };
   } else {
     const payload = JSON.parse(event.body);
     let value;
     switch (payload.type) {
       case 'ADDED_TO_SPACE':
-        value = handleAddToSpace(payload);
+        value = {
+          text: 'Hello! I’m Rokbot. I can help you to subscribe changes to jira tickets or accounts. Type ‘help’ to find out more.'
+        }
+        break;
+      case 'REMOVED_FROM_SPACE':
+        value = {
+          text: 'You will regret letting me go!!!'
+        }
         break;
       case 'MESSAGE':
         value = await handleMessage(payload);

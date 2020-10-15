@@ -1,12 +1,6 @@
 import { subscribe } from './subscription';
 import { lookup } from "./lookup";
 
-export const handleAddToSpace = (body) => {
-  return {
-    text: 'handleAddToSpace ' + body.message.sender.displayName
-  }
-}
-
 export const handleMessage = async (body) => {
   console.log(body);
   const args = body.message.text.split(' ');

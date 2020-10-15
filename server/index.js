@@ -12,12 +12,6 @@ app.get('/account/:id', async (req, res) => {
   return res.json(accountInfo);
 });
 
-app.get('/campaign', async (req, res) => {
-  console.log(req.queryParam);
-  const accountInfo = await getAccountInfo(req.params.id);
-  return res.json(accountInfo);
-});
-
 app.listen(PORT, () => {
   console.log(`Server is running in port - ${PORT}`);
 });
