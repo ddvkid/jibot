@@ -18,8 +18,77 @@ const handleJira = async (ticketNumber) => {
   }
   console.log(ticketNumber);
   const ticketDetails = await getTicketDetails(ticketNumber);
-  console.log(ticketDetails.data.fields.status, ticketDetails.data.summary);
-  return { text: JSON.stringify(ticketDetails) };
+  console.log(ticketDetails.data);
+  const fields = ticketDetails.data.fields;
+  return {
+    "cards": [
+      {
+        "header": {
+          "title": fields.summary,
+          "subtitle": ticketDetails.data.key,
+          "imageUrl": "https://wac-cdn.atlassian.com/dam/jcr:b544631f-b225-441b-9e05-57b7fd0d495b/Jira%20Software@2x-icon-blue.png"
+        },
+        "sections": [
+          {
+            "widgets": [
+              {
+                "keyValue": {
+                  "topLabel": "Ticket Number",
+                  "content": ticketNumber
+                }
+              },
+              {
+                "keyValue": {
+                  "topLabel": "Status",
+                  "content": fields.status.name
+                }
+              },
+              {
+                "keyValue": {
+                  "topLabel": "Type",
+                  "content": fields.issuetype.name
+                }
+              },
+              {
+                "keyValue": {
+                  "topLabel": "Priority",
+                  "content": fields.priority.name
+                }
+              },
+            ]
+          },
+          {
+            "header": "Description",
+            "widgets": [
+              {
+                "textParagraph": {
+                  "text": fields.description
+                }
+              }
+            ]
+          },
+          {
+            "widgets": [
+              {
+                "buttons": [
+                  {
+                    "textButton": {
+                      "text": "OPEN TICKET",
+                      "onClick": {
+                        "openLink": {
+                          "url": ticketDetails.data.self
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
 }
 
 const handleAccount = async (accountId) => {
