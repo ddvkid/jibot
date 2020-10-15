@@ -124,10 +124,11 @@ export async function getChatThreadTickets(
     };
     const data = await queryDynamo(params);
     data.Items?.forEach(x => {
-      if(!resultDic.hasOwnProperty(x.id)){
-        resultDic[x.id] = new Set([ticketId])
+      const threadId = x.chat_info.message.thread.name;
+      if(!resultDic.hasOwnProperty(threadId)){
+        resultDic[threadId] = new Set([ticketId])
       }else{
-        resultDic[x.id].add(ticketId)
+        resultDic[threadId].add(ticketId)
       }
     })
   }
