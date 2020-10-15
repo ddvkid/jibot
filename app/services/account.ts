@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const url = 'https://platform.stage.rokt.com/api/accounts';
+const url = `${process.env.LOCAL_URL}/account`;
 export async function getAccountInfo(accountId: string) {
-  return axios.get(`${url}/${accountId}`, {headers: {'Authorization': `Bearer ${process.env.JWT}`}});
+  return axios.get(`${url}/${accountId}`)
+    .then(res => res.data);
 }

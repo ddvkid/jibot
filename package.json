@@ -4,23 +4,25 @@
   "version": "0.1.0",
   "dependencies": {
     "aws-sdk": "^2.771.0",
-    "request": "^2.88.2",
-    "axios": "^0.20.0"
+    "axios": "^0.20.0",
+    "request": "^2.88.2"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.61",
-    "dotenv": "^8.2.0",
-    "googleapis": "^61.0.0",
     "@typescript-eslint/eslint-plugin": "^4.4.1",
     "@typescript-eslint/parser": "^4.4.1",
     "babel-eslint": "^10.1.0",
+    "dotenv": "^8.2.0",
     "eslint": "^7.11.0",
+    "express": "^4.17.1",
+    "googleapis": "^61.0.0",
     "serverless": "^2.6.0",
     "serverless-offline": "^6.8.0",
     "serverless-plugin-typescript": "^1.1.9",
     "typescript": "^3.9.7"
   },
   "scripts": {
-    "start": "./node_modules/.bin/serverless invoke local --function bot --path event.json"
+    "start": "./node_modules/.bin/serverless invoke local --function bot --path event.json",
+    "server": "node server/index.js"
   }
 }
