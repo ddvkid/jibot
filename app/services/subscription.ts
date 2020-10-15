@@ -4,7 +4,7 @@ import { lookup } from "./lookup";
 export const subscribe = async (payload: any = {message: {}}, type: string, value: string) => {
   console.log(payload);
   const msg = await lookup(payload, type, value);
-  if (msg.text.includes('invalid')) {
+  if (msg.text && msg.text.includes('invalid')) {
     return msg;
   }
   const params = {
