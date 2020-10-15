@@ -6,6 +6,7 @@ const OP_ATLASSIAN_API_TOKEN = "XnvYyVPtzl1VdHCkoGBx894C";
 
 interface ThreadTickets {
   threadId: string;
+  user: string;
   ticketIds: Set<string>;
 }
 
@@ -128,6 +129,7 @@ export async function getChatThreadTickets(
       if (!resultDic.hasOwnProperty(threadId)){
         resultDic[threadId] = {
           space: x.chat_info.message.space.name,
+          user: x.chat_info.user.name,
           ticketIds: new Set([ticketId])
         }
       } else {
@@ -154,11 +156,11 @@ async function queryDynamo(params: DynamoDB.DocumentClient.QueryInput) {
   }
 }
 
-export function generateMessage(ticketIds: Set<string>) {
+export function generateMessage(ticketIds: Set<string>, user: string) {
   return `
   ${Array.from(ticketIds).reduce((text: string, ticketId: string) => {
       return `${text} 
-        ${ticketId} has been changed to ${getTicketLatestStatus(ticketId)}
+        Hey <${user}>! ${ticketId} has been changed to ${getTicketLatestStatus(ticketId)}
         `;
     }, "")}
     `;
@@ -175,7 +177,7 @@ export async function runTask() {
     threadTickets.map((threadTicket) =>
       sendMessage(
         threadTicket,
-        generateMessage(threadTicket.ticketIds)
+        generateMessage(threadTicket.ticketIds, threadTicket.user)
       )
     )
   );
