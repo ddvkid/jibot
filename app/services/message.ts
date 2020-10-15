@@ -42,7 +42,7 @@ export const handleMessage = async (body) => {
         ]
       };
     case 'help':
-    case '':
+    case undefined:
       return {
         text: "*Commands:*\n  - lookup\n - subscribe\n - unsubscribe\n *Types:*\n - jira\n - account\n - campaign\n For example: lookup jira *ticket-num*"
       };
