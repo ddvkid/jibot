@@ -19,7 +19,7 @@ const handleJira = async (ticketNumber) => {
   console.log(ticketNumber);
   const ticketDetails = await getTicketDetails(ticketNumber);
   console.log(ticketDetails.data.fields.status, ticketDetails.data.summary);
-  return { text: JSON.stringify(ticketDetails.data.fields.status) };
+  return { text: JSON.stringify(ticketDetails) };
 }
 
 const handleAccount = async (accountId) => {
