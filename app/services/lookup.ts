@@ -8,7 +8,7 @@ export const lookup = async (body, type, value) => {
     default:
       return await handleType(type.toLowerCase(), value);
   }
-}
+};
 
 const handleJira = async (ticketNumber) => {
   if (!new RegExp('([a-zA-Z]{2,4}-\\d+)', 'g').test(ticketNumber)) {
@@ -88,8 +88,8 @@ const handleJira = async (ticketNumber) => {
         ]
       }
     ]
-  }
-}
+  };
+};
 
 const handleType = async (type, id) => {
   const data = await getProxyData(type, id);
