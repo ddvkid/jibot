@@ -9,9 +9,15 @@ provider:
       Action:
         - 'dynamodb:*'
       Resource: 
-        Fn::GetAtt:
-          - DynamoDBTable
-          - Arn
+        - Fn::GetAtt:
+           - DynamoDBTable
+           - Arn
+        - Fn::Join:
+          - ''
+          - - Fn::GetAtt:
+                - DynamoDBTable
+                - Arn
+            - '/index/*'       
       
 functions:
   bot:

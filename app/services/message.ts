@@ -1,4 +1,4 @@
-import { subscribe } from './subscription';
+import { subscribe, unsubscribe } from './subscription';
 import { lookup } from "./lookup";
 import { getFoods } from "./food";
 
@@ -20,6 +20,8 @@ export const handleMessage = async (body) => {
       food.imageUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${central}&zoom=20&size=400x400&key=AIzaSyBWcOtEHyGy6SAmd7MzWfVQ1KayOecj9cA`;
       console.log('image is ', food.imageUrl);
       return food;
+    case 'unsubscribe':
+      return await unsubscribe(body, type, value);
     case 'surprise?':
       return {
         "cards": [
