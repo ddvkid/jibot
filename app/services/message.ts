@@ -1,16 +1,20 @@
 import { subscribe } from './subscription';
 import { lookup } from "./lookup";
+import { getFoods } from "./food";
 
 export const handleMessage = async (body) => {
   console.log(body);
   const args = body.message.text.split(' ');
-  if (body.space.type !== 'DM') args.shift();
+  if (body.space?.type !== 'DM') args.shift();
   const [ action, type, value ] = args;
   switch (action && action.toLowerCase().trim()) {
     case 'subscribe':
       return await subscribe(body, type, value);
     case 'lookup':
       return await lookup(body, type, value);
+    case 'lunch':
+      const foods = await getFoods();
+      return foods;
     case 'surprise?':
       return {
         "cards": [
