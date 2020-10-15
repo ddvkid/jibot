@@ -1,6 +1,7 @@
 import axios from "axios";
 import { sendMessage } from "../google-chat";
 import AWS, { DynamoDB } from "aws-sdk";
+import { getChangedAccountIds } from "./account";
 const OP_ATLASSIAN_API_USER = "andrew.yang@rokt.com";
 const OP_ATLASSIAN_API_TOKEN = "XnvYyVPtzl1VdHCkoGBx894C";
 
@@ -85,13 +86,13 @@ export async function getTicketDetails(
     });
 }
 
-export async function getSubscribedTicketIds() {
+export async function getSubscribedIds(type: string) {
   const params = {
     TableName: "jibot-subscription",
     IndexName: "type-index",
     KeyConditionExpression: "#jibot_type = :hkey",
     ExpressionAttributeValues: {
-      ":hkey": "jira",
+      ":hkey": type,
     },
     ExpressionAttributeNames: {
       "#jibot_type": "type"
@@ -99,7 +100,7 @@ export async function getSubscribedTicketIds() {
   };
 
   const data = await queryDynamo(params);
-  return new Set(data?.Items?.map(x => x.value) || []);
+  return data?.Items;
 }
 
 export async function getChatThreadTickets(
@@ -121,7 +122,7 @@ export async function getChatThreadTickets(
     };
     const data = await queryDynamo(params);
     data.Items?.forEach(x => {
-      const threadId = x.chat_info.message.thread.name;
+      const threadId = x.chat_info.threadKey || x.chat_info.message.thread.name;;
       if (!resultDic.hasOwnProperty(threadId)){
         resultDic[threadId] = {
           space: x.chat_info.message.space.name,
@@ -161,9 +162,14 @@ export function generateMessage(ticketIds: Set<string>, user: string) {
     `;
 }
 
+export function createMessage(sub, changes) {
+  return `Hey <${sub.chat_info.user.name}>! The account ${changes.accountName} you subscribed has been changed by ${changes.userName.fullName}! 
+  ${JSON.stringify(changes)}`
+}
+
 export async function runTask() {
-  const subscribedTicketIds = await getSubscribedTicketIds();
-  console.log(subscribedTicketIds);
+  const subscribedTicketIds = new Set((await getSubscribedIds('jira'))?.map(x => x.value) || []);
+  console.log('subscribedTicketIds ', subscribedTicketIds);
   const changedTicketIds = await getChangedTicketIds(subscribedTicketIds);
   console.log('changedTicketIds ', changedTicketIds);
   const threadTickets = await getChatThreadTickets(changedTicketIds);
@@ -174,6 +180,20 @@ export async function runTask() {
         threadTicket,
         generateMessage(threadTicket.ticketIds, threadTicket.user)
       )
+    )
+  );
+
+  const subscribedAccountIds = await getSubscribedIds('account');
+  const changedAccountIds = await getChangedAccountIds(Array.from(new Set(subscribedAccountIds.map(x => x.value))));
+  console.log(changedAccountIds);
+  await Promise.all(
+    subscribedAccountIds
+      .filter(sub => Object.keys(changedAccountIds).includes(sub.value))
+      .map((sub) =>
+        sendMessage(
+          {space: sub.chat_info.message.space.name, threadId: sub.chat_info.threadKey},
+           createMessage(sub, changedAccountIds[sub.value])
+        )
     )
   );
 }
