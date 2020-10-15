@@ -1,4 +1,5 @@
-import { getTicketDetails } from "./jira/jira";
+import { getTicketDetails } from "./jira";
+import { getAccountInfo } from "./account";
 
 export const lookup = async (body, type, value) => {
   switch (type.toLowerCase()) {
@@ -22,5 +23,6 @@ const handleJira = async (ticketNumber) => {
 }
 
 const handleAccount = async (accountId) => {
-
+  const accountInfo = await getAccountInfo(accountId);
+  return { text: accountInfo.data.name };
 }
