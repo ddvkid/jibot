@@ -1,138 +1,175 @@
-import axios from 'axios';
-import {sendMessage} from "../google-chat";
-const OP_ATLASSIAN_API_USER='andrew.yang@rokt.com'
-const OP_ATLASSIAN_API_TOKEN='XnvYyVPtzl1VdHCkoGBx894C'
+import axios from "axios";
+import { sendMessage } from "../google-chat";
+import AWS, { DynamoDB } from "aws-sdk";
+const OP_ATLASSIAN_API_USER = "andrew.yang@rokt.com";
+const OP_ATLASSIAN_API_TOKEN = "XnvYyVPtzl1VdHCkoGBx894C";
 
 interface ThreadTickets {
-    threadId: string,
-    ticketIds: Set<string>,
+  threadId: string;
+  ticketIds: Set<string>;
 }
 
 const TicketStatusMap: Map<string, string> = new Map();
 
 const jiraAxios = axios.create({
-    baseURL: 'https://rokton.atlassian.net/rest/api/2',
-    auth: {
-        username: OP_ATLASSIAN_API_USER,
-        password: OP_ATLASSIAN_API_TOKEN,
-    },
-    headers: {
-        Accept: 'application/json',
-        ContentType: 'application/json'
-    },
-})
+  baseURL: "https://rokton.atlassian.net/rest/api/2",
+  auth: {
+    username: OP_ATLASSIAN_API_USER,
+    password: OP_ATLASSIAN_API_TOKEN,
+  },
+  headers: {
+    Accept: "application/json",
+    ContentType: "application/json",
+  },
+});
 
 export async function getTicketStatus(ticketId: string) {
-    return getTicketDetails(ticketId, 'status')
-        .then(({ data }) => {
-            console.log(ticketId, data.fields.status.name);
-            return data.fields.status.name;
-        });
+  return getTicketDetails(ticketId, "status").then(({ data }) => {
+    console.log(ticketId, data.fields.status.name);
+    return data.fields.status.name;
+  });
 }
 
-export async function isTicketsStatusChanged(ticketIds: Set<string>): Promise<boolean[]> {
-    return Promise.all(Array.from(ticketIds).map(isTicketStatusChanged));
+export async function isTicketsStatusChanged(
+  ticketIds: Set<string>
+): Promise<boolean[]> {
+  return Promise.all(Array.from(ticketIds).map(isTicketStatusChanged));
 }
 
 export function getTicketLatestStatus(ticketId: string) {
-    return TicketStatusMap.get(ticketId);
+  return TicketStatusMap.get(ticketId);
 }
 
-export async function getChangedTicketIds(allTicketIds: Set<string>):Promise<string[]> {
-    const results = await isTicketsStatusChanged(allTicketIds);
-    return Array.from(allTicketIds)
-        .filter((ticketId, index) => results[index])
+export async function getChangedTicketIds(
+  allTicketIds: Set<string>
+): Promise<string[]> {
+  const results = await isTicketsStatusChanged(allTicketIds);
+  return Array.from(allTicketIds).filter((ticketId, index) => results[index]);
 }
 
 export async function isTicketStatusChanged(ticketId: string) {
-    const oldStatus = TicketStatusMap.get(ticketId);
-    const newStatus = await getTicketStatus(ticketId);
-    if (oldStatus === undefined) {
-        TicketStatusMap.set(ticketId, newStatus)
-        return false;
-    }
-    return newStatus !== oldStatus ? !!TicketStatusMap.set(ticketId, newStatus) : false;
+  const oldStatus = TicketStatusMap.get(ticketId);
+  const newStatus = await getTicketStatus(ticketId);
+  if (oldStatus === undefined) {
+    TicketStatusMap.set(ticketId, newStatus);
+    return false;
+  }
+  return newStatus !== oldStatus
+    ? !!TicketStatusMap.set(ticketId, newStatus)
+    : false;
 }
 
-export async function getTicketDetails(ticketId: string, fields: string = '*all') {
-    return jiraAxios.get(`/issue/${ticketId}`, {
-            params: {
-                fields,
-            }
-        })
-        .then(response => ({
-            ...response,
-            data: {
-                isFound: true,
-                ...response?.data
-            }
-        }))
-        .catch((error) => {
-            // Just simply return the data with isFound:false when error happens.
-            console.log(error.toJSON());
-            return {
-                data: {
-                    isFound: false,
-                    key: ticketId,
-                }
-            };
-        });
+export async function getTicketDetails(
+  ticketId: string,
+  fields: string = "*all"
+) {
+  return jiraAxios
+    .get(`/issue/${ticketId}`, {
+      params: {
+        fields,
+      },
+    })
+    .then((response) => ({
+      ...response,
+      data: {
+        isFound: true,
+        ...response?.data,
+      },
+    }))
+    .catch((error) => {
+      // Just simply return the data with isFound:false when error happens.
+      console.log(error.toJSON());
+      return {
+        data: {
+          isFound: false,
+          key: ticketId,
+        },
+      };
+    });
 }
 
-// TODO Baron: please help to implement this function to query all subscribed ticketIds from DB
 export async function getSubscribedTicketIds() {
-    // AWS.config.update({region: 'us-east-1'});
-    // const dynamoDb = new AWS.DynamoDB();
-    // const params = {
-    //   TableName: "jibot-subscription"
-    // }
-    // dynamoDb.scan(params, (err, data) => {
-    //   if (err) {
-    //     console.log(err, err.stack);
-    //     return {
-    //       statusCode: 500,
-    //       body: JSON.stringify(err.stack),
-    //     };
-    //   } else {
-    //     console.log(data);
-    //     return {
-    //       statusCode: 200,
-    //       body: JSON.stringify(data),
-    //     };
-    //   }
-    // });
-    return new Set(['OPC-1432', 'OPC-1452']); // return all subscribed ticketIds
+  const params = {
+    TableName: "jibot-subscription",
+    IndexName: "type-index",
+    KeyConditionExpression: "#jibot_type = :hkey",
+    ExpressionAttributeValues: {
+      ":hkey": "jira",
+    },
+    ExpressionAttributeNames: {
+      "#jibot_type": "type"
+    }
+  };
+
+  const data = await queryDynamo(params);
+  return new Set(data?.Items?.map(x => x.value) || []);
 }
 
-export async function getChatThreadTickets(ticketIds: string[]): Promise<Array<ThreadTickets>> {
-    // TODO Baron getting all chat thread IDs by ticketsIds from DB
-    // And then return the structure like the example below:
+export async function getChatThreadTickets(
+  ticketIds: string[]
+): Promise<Array<ThreadTickets>> {
 
-    return [{
-        threadId: 'spaces/8yl_8QAAAAE',
-        ticketIds: new Set(['OPC-1432']), // all tickets that are subscribed in this thread
-    }];
+  const resultDic = {};
+  for (let ticketId of ticketIds) {
+    const params = {
+      TableName: "jibot-subscription",
+      IndexName: "value-index",
+      KeyConditionExpression: "#jibot_value = :hkey",
+      ExpressionAttributeValues: {
+        ":hkey": ticketId,
+      },
+      ExpressionAttributeNames: {
+        "#jibot_value": "value"
+      }
+    };
+    const data = await queryDynamo(params);
+    data.Items?.forEach(x => {
+      if(!resultDic.hasOwnProperty(x.id)){
+        resultDic[x.id] = new Set([ticketId])
+      }else{
+        resultDic[x.id].add(ticketId)
+      }
+    })
+  }
+
+  return Object.keys(resultDic).map(x => ({
+    threadId: x,
+    ticketIds: resultDic[x]
+  }))
+}
+
+async function queryDynamo(params: DynamoDB.DocumentClient.QueryInput) {
+  AWS.config.update({region: 'us-east-1'});
+  const dynamoDb = new DynamoDB.DocumentClient();
+  try {
+    const data = await dynamoDb.query(params).promise();
+    return data;
+  } catch (err) {
+    console.log(err, err.stack);
+    return null;
+  }
 }
 
 export function generateMessage(ticketIds: Set<string>) {
-    return `The following tickets are changed: 
+  return `The following tickets are changed: 
     ${Array.from(ticketIds).reduce((text: string, ticketId: string) => {
-        return `${text} 
+      return `${text} 
         ${ticketId} -> ${getTicketLatestStatus(ticketId)}
-        `
-    }, '')}
-    `
+        `;
+    }, "")}
+    `;
 }
 
 export async function runTask() {
-    const subscribedTicketIds = await getSubscribedTicketIds();
-    const changedTicketIds = await getChangedTicketIds(subscribedTicketIds);
-    const threadTickets = await getChatThreadTickets(changedTicketIds);
-    await Promise.all(threadTickets.map(threadTicket => sendMessage(threadTicket.threadId, generateMessage(threadTicket.ticketIds))))
+  const subscribedTicketIds = await getSubscribedTicketIds();
+  const changedTicketIds = await getChangedTicketIds(subscribedTicketIds);
+  const threadTickets = await getChatThreadTickets(changedTicketIds);
+  await Promise.all(
+    threadTickets.map((threadTicket) =>
+      sendMessage(
+        threadTicket.threadId,
+        generateMessage(threadTicket.ticketIds)
+      )
+    )
+  );
 }
-
-
-
-
-
-
