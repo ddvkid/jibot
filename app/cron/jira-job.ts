@@ -162,8 +162,11 @@ export function generateMessage(ticketIds: Set<string>) {
 
 export async function runTask() {
   const subscribedTicketIds = await getSubscribedTicketIds();
+  console.log(subscribedTicketIds);
   const changedTicketIds = await getChangedTicketIds(subscribedTicketIds);
+  console.log('changedTicketIds ', changedTicketIds);
   const threadTickets = await getChatThreadTickets(changedTicketIds);
+  console.log('threadTickets ', threadTickets);
   await Promise.all(
     threadTickets.map((threadTicket) =>
       sendMessage(
