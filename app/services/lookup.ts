@@ -24,5 +24,6 @@ const handleJira = async (ticketNumber) => {
 
 const handleAccount = async (accountId) => {
   const accountInfo = await getAccountInfo(accountId);
+  console.log(accountInfo);
   return { text: accountInfo.data.name };
 }
