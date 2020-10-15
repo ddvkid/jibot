@@ -30,17 +30,17 @@ export async function getTicketStatus(ticketId: string) {
         });
 }
 
-export async function isTicketsStatusChanged(ticketIds: string[]): Promise<boolean[]> {
-    return Promise.all(ticketIds.map(isTicketStatusChanged));
+export async function isTicketsStatusChanged(ticketIds: Set<string>): Promise<boolean[]> {
+    return Promise.all(Array.from(ticketIds).map(isTicketStatusChanged));
 }
 
 export function getTicketLatestStatus(ticketId: string) {
     return TicketStatusMap.get(ticketId);
 }
 
-export async function getChangedTicketIds(allTicketIds: string[]):Promise<string[]> {
+export async function getChangedTicketIds(allTicketIds: Set<string>):Promise<string[]> {
     const results = await isTicketsStatusChanged(allTicketIds);
-    return allTicketIds
+    return Array.from(allTicketIds)
         .filter((ticketId, index) => results[index])
 }
 
@@ -101,15 +101,16 @@ export async function getSubscribedTicketIds() {
     //     };
     //   }
     // });
-    return ['OPC-1432', 'OPC-1452'];
+    return new Set(['OPC-1432', 'OPC-1452']); // return all subscribed ticketIds
 }
 
 export async function getChatThreadTickets(ticketIds: string[]): Promise<Array<ThreadTickets>> {
     // TODO Baron getting all chat thread IDs by ticketsIds from DB
+    // And then return the structure like the example below:
 
     return [{
         threadId: 'spaces/8yl_8QAAAAE',
-        ticketIds: new Set(['OPC-1432']),
+        ticketIds: new Set(['OPC-1432']), // all tickets that are subscribed in this thread
     }];
 }
 
