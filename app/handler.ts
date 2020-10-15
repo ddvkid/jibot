@@ -7,7 +7,7 @@ export const bot: Handler = async (event: any) => {
   if (event.httpMethod === 'GET' || !event.body) {
     response = {
       statusCode: 200,
-      body: 'Hello! This function is meant to be used in a Hangouts Chat Room.'
+      body: 'Hello! I’m Roktbot. I can help you subscribe to jira tickets, search jira or search campaigns. Type ‘help’ to find out more.'
     };
   } else {
     const payload = JSON.parse(event.body);
