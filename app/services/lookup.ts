@@ -20,7 +20,7 @@ const handleJira = async (ticketNumber, isSub?) => {
   const ticketDetails = await getTicketDetails(ticketNumber);
   console.log(ticketDetails.data);
   const fields = ticketDetails.data.fields;
-  const title = isSub ? `Subscribed ticket ${ticketDetails.data.key} successfully!` : fields.summary;
+  const title = isSub ? `Subscribe ticket ${ticketDetails.data.key} successfully!` : fields.summary;
   return {
     "cards": [
       {
