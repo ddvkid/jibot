@@ -21,6 +21,6 @@
     "typescript": "^3.9.7"
   },
   "scripts": {
-    "start": "./node_modules/.bin/serverless invoke local --function hello"
+    "start": "./node_modules/.bin/serverless invoke local --function bot --path event.json"
   }
 }
