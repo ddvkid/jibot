@@ -24,12 +24,13 @@ const handleJira = async (ticketNumber, isSub?) => {
     "cards": [
       {
         "header": {
-          "title": `${isSub && 'Subscribed ticket successfully,\n'}${fields.summary}`,
+          "title": fields.summary,
           "subtitle": ticketDetails.data.key,
           "imageUrl": "https://wac-cdn.atlassian.com/dam/jcr:b544631f-b225-441b-9e05-57b7fd0d495b/Jira%20Software@2x-icon-blue.png"
         },
         "sections": [
           {
+            "header": `${isSub && 'Subscribed ticket successfully'}`,
             "widgets": [
               {
                 "keyValue": {
@@ -76,7 +77,7 @@ const handleJira = async (ticketNumber, isSub?) => {
                       "text": "OPEN TICKET",
                       "onClick": {
                         "openLink": {
-                          "url": ticketDetails.data.self
+                          "url": `<a href='https://rokton.atlassian.net/browse/${ticketDetails.data.key}'>${ticketDetails.data.key}</a>`
                         }
                       }
                     }

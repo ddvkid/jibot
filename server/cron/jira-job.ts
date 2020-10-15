@@ -10,7 +10,7 @@ interface ThreadTickets {
   ticketIds: Set<string>;
 }
 
-const TicketStatusMap: Map<string, string> = new Map();
+const TicketStatusMap: Map<string, any> = new Map();
 
 const jiraAxios = axios.create({
   baseURL: "https://rokton.atlassian.net/rest/api/2",
@@ -37,10 +37,6 @@ export async function isTicketsStatusChanged(
   return Promise.all(Array.from(ticketIds).map(isTicketStatusChanged));
 }
 
-export function getTicketLatestStatus(ticketId: string) {
-  return TicketStatusMap.get(ticketId);
-}
-
 export async function getChangedTicketIds(
   allTicketIds: Set<string>
 ): Promise<string[]> {
@@ -49,14 +45,14 @@ export async function getChangedTicketIds(
 }
 
 export async function isTicketStatusChanged(ticketId: string) {
-  const oldStatus = TicketStatusMap.get(ticketId);
+  const oldStatus = TicketStatusMap.get(ticketId) && TicketStatusMap.get(ticketId).newStatus;
   const newStatus = await getTicketStatus(ticketId);
   if (oldStatus === undefined) {
-    TicketStatusMap.set(ticketId, newStatus);
+    TicketStatusMap.set(ticketId, { newStatus });
     return false;
   }
   return newStatus !== oldStatus
-    ? !!TicketStatusMap.set(ticketId, newStatus)
+    ? !!TicketStatusMap.set(ticketId, { oldStatus, newStatus })
     : false;
 }
 
@@ -157,10 +153,9 @@ async function queryDynamo(params: DynamoDB.DocumentClient.QueryInput) {
 }
 
 export function generateMessage(ticketIds: Set<string>, user: string) {
-  return `
-  ${Array.from(ticketIds).reduce((text: string, ticketId: string) => {
-      return `${text} 
-        Hey <${user}>! ${ticketId} has been changed to ${getTicketLatestStatus(ticketId)}
+  return `${Array.from(ticketIds).reduce((text: string, ticketId: string) => {
+      return `${text}
+        Hey <${user}>! ${ticketId} (https://rokton.atlassian.net/browse/${ticketId}) has been changed from *${TicketStatusMap.get(ticketId).oldStatus}* to *${TicketStatusMap.get(ticketId).newStatus}*
         `;
     }, "")}
     `;
