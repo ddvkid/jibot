@@ -1,4 +1,4 @@
-import { subscribe } from './subscription';
+import { subscribe, unsubscribe } from './subscription';
 import { lookup } from "./lookup";
 import { getFoods } from "./food";
 
@@ -16,6 +16,8 @@ export const handleMessage = async (body) => {
       const { data: { results } } = await getFoods() as any;
       const food = results[Math.floor(Math.random() * results.length)];
       return food;
+    case 'unsubscribe':
+      return await unsubscribe(body, type, value);
     case 'surprise?':
       return {
         "cards": [
