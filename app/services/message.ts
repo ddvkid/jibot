@@ -19,11 +19,54 @@ export const handleMessage = async (body) => {
       const central = `${geometry.location?.lat},${geometry.location?.lng}`;
       food.imageUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${central}&zoom=20&size=400x400&key=AIzaSyBWcOtEHyGy6SAmd7MzWfVQ1KayOecj9cA`;
       console.log('image is ', food.imageUrl);
-      return {
-        text: food
+      console.log('food is ', food);
+      const result = {
+        "cards": [
+          {
+            "header": {
+              "title": food.name,
+              "subtitle": `Rating:${food.rating}`,
+              "imageUrl": "https://i.dailymail.co.uk/i/pix/2014/10/23/1414051439470_Image_galleryImage_Homer_Simpson_eating_a_do.JPG"
+            },
+            "sections": [
+              {
+                "widgets": [
+                  {
+                    "keyValue": {
+                      "topLabel": "Address",
+                      "content": food.vicinity
+                    }
+                  },
+                  {
+                    "keyValue": {
+                      "topLabel": "Opening Hour",
+                      "content": "Open now"
+                    }
+                  },
+                  {
+                    "keyValue": {
+                      "topLabel": "Type",
+                      "content": "Restaurant"
+                    }
+                  }
+                ]
+              },
+              {
+                "header": "Location",
+                "widgets": [
+                  {
+                    "image": {
+                      "imageUrl": food.imageUrl
+                    }
+                  }
+                ]
+              },
+            ]
+          }
+        ]
       };
-    case 'unsubscribe':
-      return await unsubscribe(body, type, value);
+      console.log('result is ', result);
+      return result;
     case 'surprise?':
       return {
         "cards": [
