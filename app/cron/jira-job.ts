@@ -155,10 +155,10 @@ async function queryDynamo(params: DynamoDB.DocumentClient.QueryInput) {
 }
 
 export function generateMessage(ticketIds: Set<string>) {
-  return `The following tickets are changed: 
-    ${Array.from(ticketIds).reduce((text: string, ticketId: string) => {
+  return `
+  ${Array.from(ticketIds).reduce((text: string, ticketId: string) => {
       return `${text} 
-        ${ticketId} -> ${getTicketLatestStatus(ticketId)}
+        ${ticketId} has been changed to ${getTicketLatestStatus(ticketId)}
         `;
     }, "")}
     `;

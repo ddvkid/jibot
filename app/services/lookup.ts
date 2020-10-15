@@ -1,16 +1,16 @@
 import { getTicketDetails } from "./jira";
 import { getProxyData } from "./proxy";
 
-export const lookup = async (body, type, value) => {
+export const lookup = async (body, type, value, isSub?) => {
   switch (type.toLowerCase()) {
     case 'jira':
-      return await handleJira(value);
+      return await handleJira(value, isSub);
     default:
       return await handleType(type.toLowerCase(), value);
   }
 };
 
-const handleJira = async (ticketNumber) => {
+const handleJira = async (ticketNumber, isSub?) => {
   if (!new RegExp('([a-zA-Z]{2,4}-\\d+)', 'g').test(ticketNumber)) {
     return {
       text: 'Invalid ticket number!',
@@ -24,7 +24,7 @@ const handleJira = async (ticketNumber) => {
     "cards": [
       {
         "header": {
-          "title": fields.summary,
+          "title": `${isSub && 'Subscribed ticket successfully,\n'}${fields.summary}`,
           "subtitle": ticketDetails.data.key,
           "imageUrl": "https://wac-cdn.atlassian.com/dam/jcr:b544631f-b225-441b-9e05-57b7fd0d495b/Jira%20Software@2x-icon-blue.png"
         },
