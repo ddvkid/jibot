@@ -8,7 +8,7 @@ export const lookup = async (body, type, value) => {
     case 'account':
       return await handleAccount(value);
   }
-}
+};
 
 const handleJira = async (ticketNumber) => {
   if (!new RegExp('([a-zA-Z]{2,4}-\\d+)', 'g').test(ticketNumber)) {
@@ -88,11 +88,12 @@ const handleJira = async (ticketNumber) => {
         ]
       }
     ]
-  }
-}
+  };
+};
 
 const handleAccount = async (accountId) => {
   const accountInfo = await getAccountInfo(accountId);
-  console.log(accountInfo);
-  return { text: accountInfo.name };
-}
+  return {
+    text: JSON.stringify(accountInfo),
+  };
+};
