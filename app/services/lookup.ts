@@ -25,7 +25,7 @@ const handleJira = async (ticketNumber, isSub?) => {
       {
         "header": {
           "title": `fields.summary`,
-          "subtitle": `${isSub && `Subscribed ticket ${ticketDetails.data.key} successfully!` }${ticketDetails.data.key}`,
+          "subtitle": `${isSub ? `Subscribed ticket ${ticketDetails.data.key} successfully!` : ticketDetails.data.key}`,
           "imageUrl": "https://wac-cdn.atlassian.com/dam/jcr:b544631f-b225-441b-9e05-57b7fd0d495b/Jira%20Software@2x-icon-blue.png"
         },
         "sections": [

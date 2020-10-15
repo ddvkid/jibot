@@ -1,5 +1,4 @@
 import { DynamoDB } from "aws-sdk";
-import { message } from "./bot";
 import { lookup } from "./lookup";
 
 export const subscribe = async (payload: any = {message: {}}, type: string, value: string) => {
