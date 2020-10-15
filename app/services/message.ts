@@ -12,7 +12,7 @@ export const handleMessage = async (body) => {
   const args = body.message.text.split(' ');
   if (body.space.type !== 'DM') args.shift();
   const [ action, type, value ] = args;
-  switch (action && action.toLocaleString()) {
+  switch (action && action.toLowerCase().trim()) {
     case 'subscribe':
       return await subscribe(body, type, value);
     case 'lookup':

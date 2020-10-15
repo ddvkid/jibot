@@ -5,3 +5,8 @@ exports.getAccountInfo = async (accountId) => {
   return axios.get(`${url}/${accountId}`, {headers: {'Authorization': `Bearer ${process.env.JWT}`}})
     .then(res => res.data);
 }
+
+exports.getCampaignInfo = async (accountId) => {
+  return axios.get(`${url}/${accountId}`, {headers: {'Authorization': `Bearer ${process.env.JWT}`}})
+    .then(res => res.data);
+}
