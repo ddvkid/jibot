@@ -1,21 +1,16 @@
 import { subscribe } from './subscription';
 import { lookup } from "./lookup";
 
-export const handleAddToSpace = (body) => {
-  return {
-    text: 'handleAddToSpace ' + body.message.sender.displayName
-  }
-}
-
 export const handleMessage = async (body) => {
-  const [ _, action, type, value ] = body.message.text.split(' ');
-  switch (action && action.toLocaleString()) {
+  console.log(body);
+  const args = body.message.text.split(' ');
+  if (body.space.type !== 'DM') args.shift();
+  const [ action, type, value ] = args;
+  switch (action && action.toLowerCase().trim()) {
     case 'subscribe':
       return await subscribe(body, type, value);
     case 'lookup':
       return await lookup(body, type, value);
-    case 'help':
-      return "*Here are some things that I can do for you:*\n   Lookup ‘jira-ticket’.\n   Lookup campaign campaignId.\n   Lookup account accountId.\n   Subscribe jira jira-ticket.\n   Subscribe campaign campaignId.\n   Subscribe account accountId.";
     case 'surprise?':
       return {
         "cards": [
@@ -38,13 +33,19 @@ export const handleMessage = async (body) => {
                   }
                 ]
               },
-
             ]
           }
         ]
       };
+    case 'help':
+    case '':
+      return {
+        text: "*Commands:*\n  - lookup\n - subscribe\n - unsubscribe\n *Types:*\n - jira\n - account\n - campaign\n For example: lookup jira *ticket-num*"
+      };
     default:
-      return "*Sorry, I don’t think I got that. Here are a few things you can type right  now:*\n   Lookup ‘jira-ticket’.\n   Lookup campaign campaignId.\n   Lookup account accountId.\n   Subscribe jira jira-ticket.\n   Subscribe campaign campaignId.\n   Subscribe account accountId.";
+      return {
+        text: "Sorry this feature is not available on a free account, join us now with only $99/day!!! \"https://andrews-jibot-images.s3.amazonaws.com/2059171460.jpg\""
+      }
   }
 };
 

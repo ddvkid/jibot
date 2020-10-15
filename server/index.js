@@ -1,4 +1,4 @@
-const { getAccountInfo } = require("./services/account");
+const { getAccountInfo } = require("./services/requests");
 require('dotenv').config();
 const express = require('express');
 const PORT = process.env.PORT || 1124;

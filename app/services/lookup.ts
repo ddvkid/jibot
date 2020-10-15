@@ -1,14 +1,14 @@
 import { getTicketDetails } from "./jira";
-import { getAccountInfo } from "./account";
+import { getProxyData } from "./proxy";
 
 export const lookup = async (body, type, value) => {
   switch (type.toLowerCase()) {
     case 'jira':
       return await handleJira(value);
-    case 'account':
-      return await handleAccount(value);
+    default:
+      return await handleType(type.toLowerCase(), value);
   }
-}
+};
 
 const handleJira = async (ticketNumber) => {
   if (!new RegExp('([a-zA-Z]{2,4}-\\d+)', 'g').test(ticketNumber)) {
@@ -88,11 +88,19 @@ const handleJira = async (ticketNumber) => {
         ]
       }
     ]
-  }
+  };
+};
+
+const handleType = async (type, id) => {
+  const data = await getProxyData(type, id);
+  return createMessage(type, data)
 }
 
-const handleAccount = async (accountId) => {
-  const accountInfo = await getAccountInfo(accountId);
-  console.log(accountInfo);
-  return { text: accountInfo.name };
+const createMessage = (type, data) => {
+  switch (type) {
+    case 'type':
+      return { text: data.name };
+    case 'campaign':
+      return { text: 'campaign' };
+  }
 }
