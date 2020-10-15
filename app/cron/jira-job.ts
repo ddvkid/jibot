@@ -3,11 +3,6 @@ import {sendMessage} from "../google-chat";
 const OP_ATLASSIAN_API_USER='andrew.yang@rokt.com'
 const OP_ATLASSIAN_API_TOKEN='XnvYyVPtzl1VdHCkoGBx894C'
 
-interface TicketStatus {
-    ticketId: string,
-    status: string,
-}
-
 interface ThreadTickets {
     threadId: string,
     ticketIds: Set<string>,
