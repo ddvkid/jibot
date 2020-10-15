@@ -50,7 +50,7 @@ export const handleMessage = async (body) => {
       };
     default:
       return {
-        text: "Sorry this feature is not available on a free account, join us now with only $99/day!!!"
+        text: "Sorry this feature is not available on a free account, join us now with only $99/day!!! \"https://andrews-jibot-images.s3.amazonaws.com/2059171460.jpg\""
       }
   }
 };
