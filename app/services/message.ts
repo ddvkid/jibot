@@ -13,7 +13,8 @@ export const handleMessage = async (body) => {
     case 'lookup':
       return await lookup(body, type, value);
     case 'lunch':
-      return await getFoods();
+      const { data: { results } } = await getFoods() as any;
+      return results[Math.floor(Math.random() * results.length)];
     case 'surprise?':
       return {
         "cards": [
