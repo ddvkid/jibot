@@ -20,12 +20,13 @@ const handleJira = async (ticketNumber, isSub?) => {
   const ticketDetails = await getTicketDetails(ticketNumber);
   console.log(ticketDetails.data);
   const fields = ticketDetails.data.fields;
+  const title = isSub ? `Subscribed ticket ${ticketDetails.data.key} successfully!` : fields.summary;
   return {
     "cards": [
       {
         "header": {
-          "title": fields.summary,
-          "subtitle": `${isSub ? `Subscribed ticket ${ticketDetails.data.key} successfully!` : ticketDetails.data.key}`,
+          "title": title,
+          "subtitle": ticketDetails.data.key,
           "imageUrl": "https://wac-cdn.atlassian.com/dam/jcr:b544631f-b225-441b-9e05-57b7fd0d495b/Jira%20Software@2x-icon-blue.png"
         },
         "sections": [
@@ -76,7 +77,7 @@ const handleJira = async (ticketNumber, isSub?) => {
                       "text": "OPEN TICKET",
                       "onClick": {
                         "openLink": {
-                          "url": `<a href='https://rokton.atlassian.net/browse/${ticketDetails.data.key}'>${ticketDetails.data.key}</a>`
+                          "url": `https://rokton.atlassian.net/browse/${ticketDetails.data.key}'`
                         }
                       }
                     }
