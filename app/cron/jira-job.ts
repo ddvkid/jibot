@@ -125,17 +125,20 @@ export async function getChatThreadTickets(
     const data = await queryDynamo(params);
     data.Items?.forEach(x => {
       const threadId = x.chat_info.message.thread.name;
-      if(!resultDic.hasOwnProperty(threadId)){
-        resultDic[threadId] = new Set([ticketId])
-      }else{
-        resultDic[threadId].add(ticketId)
+      if (!resultDic.hasOwnProperty(threadId)){
+        resultDic[threadId] = {
+          space: x.chat_info.message.space.name,
+          ticketIds: new Set([ticketId])
+        }
+      } else {
+        resultDic[threadId].ticketIds.add(ticketId)
       }
     })
   }
 
   return Object.keys(resultDic).map(x => ({
     threadId: x,
-    ticketIds: resultDic[x]
+    ...resultDic[x]
   }))
 }
 
@@ -171,7 +174,7 @@ export async function runTask() {
   await Promise.all(
     threadTickets.map((threadTicket) =>
       sendMessage(
-        threadTicket.threadId,
+        threadTicket,
         generateMessage(threadTicket.ticketIds)
       )
     )
