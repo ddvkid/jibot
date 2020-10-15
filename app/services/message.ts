@@ -14,7 +14,12 @@ export const handleMessage = async (body) => {
       return await lookup(body, type, value);
     case 'lunch':
       const { data: { results } } = await getFoods() as any;
-      return results[Math.floor(Math.random() * results.length)];
+      const food = results[Math.floor(Math.random() * results.length)];
+      const { geometry } = food;
+      const central = `${geometry.location?.lat},${geometry.location?.lng}`;
+      food.imageUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${central}&zoom=20&size=400x400&key=AIzaSyBWcOtEHyGy6SAmd7MzWfVQ1KayOecj9cA`;
+      console.log('image is ', food.imageUrl);
+      return food;
     case 'surprise?':
       return {
         "cards": [
